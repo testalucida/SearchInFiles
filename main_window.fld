@@ -1,0 +1,59 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1,0400
+header_name {.h}
+code_name {.cxx}
+Function {make_window()} {open
+} {
+  Fl_Window {} {
+    label {Textsuche in Dateien} open selected
+    xywh {176 175 600 425} type Double color 38 labelcolor 46 visible
+  } {
+    Fl_Input _txtSuchtext {
+      label {Suche Text: }
+      xywh {139 20 366 20} box FLAT_BOX selection_color 40 labelfont 1 labelcolor 53 textfont 1
+    }
+    Fl_Input _txtSuchVerzeichnis {
+      label {in Verzeichnis: }
+      xywh {140 114 366 25} box FLAT_BOX labelfont 1 labelcolor 53 textfont 1
+    }
+    Fl_Return_Button _btnStart {
+      label {Suche starten}
+      xywh {10 183 130 25} box THIN_UP_BOX down_box DOWN_BOX color 44 labelfont 1 labelsize 12 labelcolor 55
+    }
+    Fl_Button _btnCancel {
+      label Abbrechen
+      xywh {146 183 130 25} box THIN_UP_BOX down_box DOWN_BOX color 43 labelfont 1 labelsize 12 labelcolor 55
+    }
+    Fl_Check_Button _cbRegex {
+      label { Regex}
+      tooltip {Kennzeichnet, ob der eingegebene Suchtext ein regulärer Ausdruck ist} xywh {514 18 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
+    }
+    Fl_Button _btnOpenFileDialog {
+      label {...}
+      xywh {514 113 25 25} box THIN_UP_BOX down_box DOWN_BOX color 43 labelfont 1 labelsize 12 labelcolor 55
+    }
+    Fl_Check_Button _cbRekursiv {
+      label { rekursiv suchen}
+      xywh {140 144 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
+    }
+    Fl_Input _txtFilePattern {
+      label {File pattern: }
+      tooltip {Keine Eingabe: Suche in allen; *.h: Suche nur in .h-Dateien; Pattern durch Strichpunkt trennen} xywh {139 50 366 25} box FLAT_BOX selection_color 40 labelfont 1 labelcolor 53 textfont 1
+    }
+    Fl_Check_Button _cbCaseSensitiv {
+      label { Groß-/Kleinschreibung beachten}
+      xywh {140 80 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
+    }
+    Fl_Group _grpResults {open
+      xywh {10 251 580 165} box FLAT_BOX color 35
+    } {
+      Fl_Table _table {open
+        xywh {15 256 570 154} box THIN_UP_FRAME color 35 labelsize 12
+      } {}
+    }
+    Fl_Box {} {
+      label {Treffer in Dateien}
+      xywh {10 228 150 25} labelfont 1 labelcolor 53
+    }
+  }
+}
