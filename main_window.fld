@@ -2,27 +2,30 @@
 version 1,0400
 header_name {.h}
 code_name {.cxx}
+decl {\#include "resulttable.h"} {selected public local
+}
+
 Function {make_window()} {open
 } {
   Fl_Window {} {
-    label {Textsuche in Dateien} open selected
-    xywh {176 175 600 425} type Double color 38 labelcolor 46 visible
+    label {Textsuche in Dateien} open
+    xywh {81 196 600 540} type Double color 38 labelcolor 46 visible
   } {
     Fl_Input _txtSuchtext {
       label {Suche Text: }
-      xywh {139 20 366 20} box FLAT_BOX selection_color 40 labelfont 1 labelcolor 53 textfont 1
+      tooltip {Gib hier zu suchenden Text oder einen regulären Ausdruck ein} xywh {139 20 366 25} box FLAT_BOX selection_color 40 labelfont 1 labelcolor 53 textfont 1
     }
     Fl_Input _txtSuchVerzeichnis {
       label {in Verzeichnis: }
-      xywh {140 114 366 25} box FLAT_BOX labelfont 1 labelcolor 53 textfont 1
+      xywh {140 191 366 25} box FLAT_BOX labelfont 1 labelcolor 53 textfont 1
     }
     Fl_Return_Button _btnStart {
       label {Suche starten}
-      xywh {10 183 130 25} box THIN_UP_BOX down_box DOWN_BOX color 44 labelfont 1 labelsize 12 labelcolor 55
+      xywh {12 260 130 25} box THIN_UP_BOX down_box DOWN_BOX color 44 labelfont 1 labelsize 12 labelcolor 55
     }
     Fl_Button _btnCancel {
       label Abbrechen
-      xywh {146 183 130 25} box THIN_UP_BOX down_box DOWN_BOX color 43 labelfont 1 labelsize 12 labelcolor 55
+      xywh {148 260 130 25} box THIN_UP_BOX down_box DOWN_BOX color 43 labelfont 1 labelsize 12 labelcolor 55
     }
     Fl_Check_Button _cbRegex {
       label { Regex}
@@ -30,30 +33,42 @@ Function {make_window()} {open
     }
     Fl_Button _btnOpenFileDialog {
       label {...}
-      xywh {514 113 25 25} box THIN_UP_BOX down_box DOWN_BOX color 43 labelfont 1 labelsize 12 labelcolor 55
+      xywh {514 191 25 25} box THIN_UP_BOX down_box DOWN_BOX color 43 labelfont 1 labelsize 12 labelcolor 55
     }
     Fl_Check_Button _cbRekursiv {
       label { rekursiv suchen}
-      xywh {140 144 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
+      xywh {140 221 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
     }
     Fl_Input _txtFilePattern {
       label {File pattern: }
-      tooltip {Keine Eingabe: Suche in allen; *.h: Suche nur in .h-Dateien; Pattern durch Strichpunkt trennen} xywh {139 50 366 25} box FLAT_BOX selection_color 40 labelfont 1 labelcolor 53 textfont 1
+      tooltip {Keine Eingabe: Suche in allen; *.h: Suche nur in .h-Dateien; Pattern durch Komma trennen} xywh {139 118 366 25} box FLAT_BOX selection_color 40 labelfont 1 labelcolor 53 textfont 1
     }
-    Fl_Check_Button _cbCaseSensitiv {
-      label { Groß-/Kleinschreibung beachten}
-      xywh {140 80 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
+    Fl_Check_Button _cbMatchWord {
+      label { nur ganzes Wort suchen}
+      tooltip {Sucht den eingegebenen Suchtext nur als ganzes Wort, nicht als Bestandteil eines anderen Wortes} xywh {139 73 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
     }
     Fl_Group _grpResults {open
-      xywh {10 251 580 165} box FLAT_BOX color 35
+      xywh {10 329 580 169} box FLAT_BOX color 35
     } {
       Fl_Table _table {open
-        xywh {15 256 570 154} box THIN_UP_FRAME color 35 labelsize 12
+        xywh {15 333 570 154} box THIN_UP_FRAME color 35 labelsize 12
+        class ResultTable
       } {}
     }
     Fl_Box {} {
       label {Treffer in Dateien}
-      xywh {10 228 150 25} labelfont 1 labelcolor 53
+      xywh {12 306 150 25} labelfont 1 labelcolor 53
+    }
+    Fl_Check_Button _cbCaseSensitiv {
+      label { Groß-/Kleinschreibung beachten}
+      xywh {139 49 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
+    }
+    Fl_Check_Button _cbIncludeBinaries {
+      label { auch in Binärdateien suchen}
+      xywh {139 147 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
+    }
+    Fl_Output _outStatus {
+      xywh {0 515 600 25} box FLAT_BOX color 46 labeltype NO_LABEL
     }
   }
 }
