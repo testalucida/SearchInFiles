@@ -1,0 +1,32 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1,0400
+header_name {.h}
+code_name {.cxx}
+Function {make_window()} {open
+} {
+  Fl_Window {} {
+    label {Erfasse eine nichtsnutzige Person} open selected
+    xywh {167 222 475 170} type Double color 38 labelcolor 46 visible
+  } {
+    Fl_Input _txtName {
+      label {Gib hier deinen verdammten Namen ein: }
+      xywh {342 16 115 20} box FLAT_BOX selection_color 40 labelfont 1 labelcolor 53 textfont 1
+    }
+    Fl_Input _txtVorname {
+      label {...und deinen Vornamen auch: }
+      xywh {342 46 115 20} box FLAT_BOX labelfont 1 labelcolor 53 textfont 1
+    }
+    Fl_Choice _cboTitle {
+      label {hast du auch einen Scheißtitel: } open
+      xywh {340 77 119 20} down_box FLAT_BOX color 55 selection_color 41 labelfont 1 labelcolor 52 textfont 1
+    } {}
+    Fl_Return_Button _btnOk {
+      label {Den Mist speichern}
+      xywh {10 120 165 25} box THIN_UP_BOX down_box DOWN_BOX color 44 labelfont 1 labelsize 12 labelcolor 55
+    }
+    Fl_Button _btnCancel {
+      label {Lass' gut sein}
+      xywh {180 120 105 25} box THIN_UP_BOX down_box DOWN_BOX color 43 labelfont 1 labelsize 12 labelcolor 55
+    }
+  }
+}

@@ -2,14 +2,14 @@
 version 1,0400
 header_name {.h}
 code_name {.cxx}
-decl {\#include "resulttable.h"} {selected public local
+decl {\#include "resulttable.h"} {public local
 }
 
 Function {make_window()} {open
 } {
   Fl_Window {} {
     label {Textsuche in Dateien} open
-    xywh {81 196 600 540} type Double color 38 labelcolor 46 visible
+    xywh {318 57 600 600} type Double color 38 labelcolor 46 resizable visible
   } {
     Fl_Input _txtSuchtext {
       label {Suche Text: }
@@ -20,7 +20,7 @@ Function {make_window()} {open
       xywh {140 191 366 25} box FLAT_BOX labelfont 1 labelcolor 53 textfont 1
     }
     Fl_Return_Button _btnStart {
-      label {Suche starten}
+      label {Suche starten} selected
       xywh {12 260 130 25} box THIN_UP_BOX down_box DOWN_BOX color 44 labelfont 1 labelsize 12 labelcolor 55
     }
     Fl_Button _btnCancel {
@@ -48,16 +48,16 @@ Function {make_window()} {open
       tooltip {Sucht den eingegebenen Suchtext nur als ganzes Wort, nicht als Bestandteil eines anderen Wortes} xywh {139 73 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
     }
     Fl_Group _grpResults {open
-      xywh {10 329 580 169} box FLAT_BOX color 35
+      xywh {10 391 580 169} box FLAT_BOX color 35
     } {
       Fl_Table _table {open
-        xywh {15 333 570 154} box THIN_UP_FRAME color 35 labelsize 12
+        xywh {10 391 580 169} box THIN_UP_FRAME color 35 labelsize 12
         class ResultTable
       } {}
     }
     Fl_Box {} {
       label {Treffer in Dateien}
-      xywh {12 306 150 25} labelfont 1 labelcolor 53
+      xywh {12 368 150 25} labelfont 1 labelcolor 53
     }
     Fl_Check_Button _cbCaseSensitiv {
       label { Groß-/Kleinschreibung beachten}
@@ -68,7 +68,14 @@ Function {make_window()} {open
       xywh {139 147 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
     }
     Fl_Output _outStatus {
-      xywh {0 515 600 25} box FLAT_BOX color 46 labeltype NO_LABEL
+      xywh {0 575 600 25} box FLAT_BOX color 46 labeltype NO_LABEL textsize 12
+    }
+    Fl_Output _outCommand {
+      xywh {10 327 580 25} box FLAT_BOX color 46 labeltype NO_LABEL textsize 12
+    }
+    Fl_Box {} {
+      label {Erzeugtes grep Command}
+      xywh {7 303 220 25} labelfont 1 labelcolor 53
     }
   }
 }

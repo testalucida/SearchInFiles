@@ -15,23 +15,26 @@ Grep::Grep(const ISearchCriteria& crit)
 
 const Result& Grep::search() {
     prepareCommand();
-    fprintf(stderr, "command: %s\n", _command.c_str());
+    //do callback: command is prepared and ready
+    if(_pccc) {
+        (*_pccc)(_command.c_str());
+    }
     
     char buffer[128];
     string grepresult = "";
     
-    FILE* pipe = popen(_command.c_str(), "r");
-    if (!pipe) throw std::runtime_error("popen() failed!");
+    _pPipe = popen(_command.c_str(), "r");
+    if (!_pPipe) throw std::runtime_error("popen() failed!");
     
     try {
-        while (fgets(buffer, sizeof buffer, pipe) != NULL) {
+        while (fgets(buffer, sizeof buffer, _pPipe) != NULL) {
             grepresult += buffer;
         }
     } catch (...) {
-        pclose(pipe);
+        pclose(_pPipe);
         throw;
     }
-    pclose(pipe);
+    pclose(_pPipe);
     
 //    fprintf(stderr, "grepresult: %s\n", grepresult.c_str());
     
@@ -109,6 +112,10 @@ void Grep::createResult(const std::string& grepresult) {
     my::StringHelper::instance().tokenize(grepresult.c_str(), '\n', matches);
     _result.set(matches);
     if(_result.getCount() == 0) _result.add("Kein Treffer.");
+}
+
+void Grep::cancel() {
+    pclose(_pPipe);
 }
 
 

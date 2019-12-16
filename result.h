@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 class Result {
 public:
@@ -22,6 +23,8 @@ public:
 private:
     std::vector<std::string> _matches;
 };
+
+typedef std::unique_ptr<Result> ResultPtr;
 
 
 #endif /* RESULT_H */

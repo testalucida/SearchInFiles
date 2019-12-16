@@ -6,10 +6,23 @@
 
 #include <FL/Fl_Native_File_Chooser.H>
 
+
 #include <iostream>
 #include <unistd.h>
 
+#include <pthread.h>
+
 using namespace std;
+
+
+typedef pthread_t Fl_Thread;
+extern "C" {
+  typedef void *(Fl_Thread_Func)(void *);
+}
+
+static int fl_create_thread(Fl_Thread& t, Fl_Thread_Func* f, void* p) {
+  return pthread_create((pthread_t*)&t, 0, f, p);
+}
 
 void onOpenFileDialog(Fl_Widget*, void*) {
     Fl_Native_File_Chooser native;
@@ -50,8 +63,43 @@ ISearchCriteria& provideSearchCriteria(ISearchCriteria& crit) {
     return crit;
 }
 
+void awakeCallback(void *userdata) {
+    //runs in main thread
+    _btnStart->activate();
+}
+
+void onCommandCreated(const char* pMsg) {
+    //runs in worker threads
+    fprintf(stderr, "command: %s\n", pMsg);
+    Fl::lock();
+    _outCommand->value(pMsg);
+    Fl::unlock();
+    Fl::awake();
+}
+
+void onGrepFinished(ResultPtr pResult) {
+    
+}
+
 Result g_result;
 
+extern "C" void* nextSearch(void*) {
+    //runs in worker threads
+    ISearchCriteria crit;
+    provideSearchCriteria(crit);
+    Grep grep(crit);
+    grep.registerCommandCreatedCallback(onCommandCreated);
+    grep.registerSearchFinishedCallback(onGrepFinished);
+    const Result& result = grep.search();
+    g_result = result;
+    Fl::lock();
+    _table->setResult(g_result);
+    Fl::unlock();
+    Fl::awake(awakeCallback, NULL);
+    return NULL;
+}
+
+Fl_Thread next_thread;
 void onStartSuche(Fl_Widget*, void*) {
     if(isEmpty(_txtSuchtext->value())) {
         fl_alert("Es ist kein zu suchender Text eingegeben.");
@@ -62,16 +110,19 @@ void onStartSuche(Fl_Widget*, void*) {
         return;
     }
     
-    ISearchCriteria crit;
-    provideSearchCriteria(crit);
-    Grep grep(crit);
-    const Result& result = grep.search();
-    g_result = result;
-    _table->setResult(g_result);
+    _btnStart->deactivate();
+    
+    fl_create_thread(next_thread, nextSearch, NULL);
+ 
 }
 
 void onCancel(Fl_Widget*, void*) {
-    
+    /* Cancel THREAD immediately or at the next possibility.  */
+    int rc =  pthread_cancel((pthread_t) next_thread);
+    string msg = (rc != 0) ? "Abbrechen der Suche nicht erfolgreich." :
+                             "Suche abgebrochen.";
+    _outStatus->value(msg.c_str());
+    _btnStart->activate();
 }
 
 void testGrep() {
@@ -119,27 +170,32 @@ void testGrep() {
     
 }
 
+
+#include "searchcontroller.h"
+
 int main() {
-//    testGrep();
-//    return 0;
-    
     //Fl::scheme("gtk+");
     Fl::scheme("gleam");
     
     Fl_Double_Window* pWin = make_window();
     _txtFilePattern->value("*.cpp, *.cxx, *.cc, *.c, *.h, *.hpp, *.hxx");
     char filename[FILENAME_MAX];
-    getcwd(filename, FILENAME_MAX);
+    char* resp = getcwd(filename, FILENAME_MAX);
     _txtSuchVerzeichnis->value(filename);
     _btnOpenFileDialog->callback(onOpenFileDialog);
     
     _cbRekursiv->value(1);
     
-    _btnStart->callback(onStartSuche);
-    _btnCancel->callback(onCancel);
+    //_btnStart->callback(onStartSuche);
+    //_btnCancel->callback(onCancel);
     
     _outStatus->value("Bereit.");
     
+    SearchController();
+    
     pWin->show();
+    
+    Fl::lock();
+    
     return Fl::run();
 }
