@@ -21,18 +21,7 @@
 
 #include <string>
 
-class ResultTable : public Fl_Table_Row
-{
-private:
-    Fl_Color cell_bgcolor;				// color of cell's bg color
-    Fl_Color cell_fgcolor;				// color of cell's fg color
-    const Result* _pResult;
-protected:
-    void draw_cell(TableContext context,  		// table cell drawing
-    		   int R=0, int C=0, int X=0, int Y=0, int W=0, int H=0);
-    static void event_callback(Fl_Widget*, void*);
-    void event_callback2();				// callback for table events
-
+class ResultTable : public Fl_Table_Row {
 public:
     ResultTable(int x, int y, int w, int h, const char *l=0) : Fl_Table_Row(x,y,w,h,l)
     {
@@ -43,12 +32,23 @@ public:
         callback(&event_callback, (void*)this);
 	end();
     }
-    ~ResultTable() { }
+    ~ResultTable() {if(_pResult) delete _pResult; }
     Fl_Color GetCellFGColor() const { return(cell_fgcolor); }
     Fl_Color GetCellBGColor() const { return(cell_bgcolor); }
     void SetCellFGColor(Fl_Color val) { cell_fgcolor = val; }
     void SetCellBGColor(Fl_Color val) { cell_bgcolor = val; }
-    void setResult(const Result& result);
+    void setResult(Result* pResult);
+
+protected:
+    void draw_cell(TableContext context,  		// table cell drawing
+    		   int R=0, int C=0, int X=0, int Y=0, int W=0, int H=0);
+    static void event_callback(Fl_Widget*, void*);
+    void event_callback2();				// callback for table events
+
+private:
+    Fl_Color cell_bgcolor;				// color of cell's bg color
+    Fl_Color cell_fgcolor;				// color of cell's fg color
+    Result* _pResult = NULL;
 };
 
 

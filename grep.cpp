@@ -8,8 +8,8 @@
 
 using namespace std;
 
-Grep::Grep(const ISearchCriteria& crit) 
-: _crit(crit)
+Grep::Grep(const ISearchCriteria& crit, int pipefd) 
+: _crit(crit), _pipefd(pipefd)
 {    
 }
 
@@ -25,6 +25,9 @@ const Result& Grep::search() {
     
     _pPipe = popen(_command.c_str(), "r");
     if (!_pPipe) throw std::runtime_error("popen() failed!");
+    if(_pipeCreatedCallback) {
+        (*_pipeCreatedCallback)(_pPipe);
+    }
     
     try {
         while (fgets(buffer, sizeof buffer, _pPipe) != NULL) {
@@ -36,9 +39,11 @@ const Result& Grep::search() {
     }
     pclose(_pPipe);
     
+    //write grepresult to communication pipe:
+    write(_pipefd, grepresult.c_str(), grepresult.length());
 //    fprintf(stderr, "grepresult: %s\n", grepresult.c_str());
     
-    createResult(grepresult);
+    //createResult(grepresult);
     return _result;
 }
 
@@ -107,12 +112,12 @@ void Grep::provideFilePattern() {
     }
 }
 
-void Grep::createResult(const std::string& grepresult) {
-    vector<string> matches;
-    my::StringHelper::instance().tokenize(grepresult.c_str(), '\n', matches);
-    _result.set(matches);
-    if(_result.getCount() == 0) _result.add("Kein Treffer.");
-}
+//void Grep::createResult(const std::string& grepresult) {
+//    vector<string> matches;
+//    my::StringHelper::instance().tokenize(grepresult.c_str(), '\n', matches);
+//    _result.set(matches);
+//    if(_result.getCount() == 0) _result.add("Kein Treffer.");
+//}
 
 void Grep::cancel() {
     pclose(_pPipe);

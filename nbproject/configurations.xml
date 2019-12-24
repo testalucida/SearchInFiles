@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>/home/martin/Projects/cpp/SearchInFiles/commandpipe.h</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/grep.h</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/isearchcriteria.h</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/main_window.h</itemPath>
@@ -19,6 +20,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>/home/martin/Projects/cpp/SearchInFiles/commandpipe.cpp</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/grep.cpp</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/main.cpp</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/main_window.cxx</itemPath>
@@ -70,6 +72,16 @@
           <commandLine>-lXrender -lXcursor -lXfixes -lXext -lXft -lfontconfig -lXinerama -lpthread -ldl -lm -lX11</commandLine>
         </linkerTool>
       </compileType>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/commandpipe.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/commandpipe.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="/home/martin/Projects/cpp/SearchInFiles/grep.cpp"
             ex="false"
             tool="1"
@@ -173,6 +185,16 @@
           <commandLine>-lXrender -lXcursor -lXfixes -lXext -lXft -lfontconfig -lXinerama -lpthread -ldl -lm -lX11</commandLine>
         </linkerTool>
       </compileType>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/commandpipe.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/commandpipe.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="/home/martin/Projects/cpp/SearchInFiles/grep.cpp"
             ex="false"
             tool="1"

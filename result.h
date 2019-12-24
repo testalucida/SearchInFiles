@@ -12,10 +12,12 @@
 #include <string>
 #include <vector>
 #include <memory>
+//#include <unique_ptr.h>
 
 class Result {
 public:
     Result() {}
+    Result(std::string resultstring);
     void add(const char* s) {_matches.push_back(s);}
     void set(std::vector<std::string> matches);
     const char* get(int row) const;

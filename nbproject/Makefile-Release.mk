@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/69fa279c/commandpipe.o \
 	${OBJECTDIR}/_ext/69fa279c/grep.o \
 	${OBJECTDIR}/_ext/69fa279c/main.o \
 	${OBJECTDIR}/_ext/69fa279c/main_window.o \
@@ -66,6 +67,11 @@ LDLIBSOPTIONS=-L/home/martin/Projects/cpp/fltk-1.4.x.20191115/lib -L/home/martin
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/searchinfiles: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/searchinfiles ${OBJECTFILES} ${LDLIBSOPTIONS} -lXrender -lXcursor -lXfixes -lXext -lXft -lfontconfig -lXinerama -lpthread -ldl -lm -lX11
+
+${OBJECTDIR}/_ext/69fa279c/commandpipe.o: /home/martin/Projects/cpp/SearchInFiles/commandpipe.cpp
+	${MKDIR} -p ${OBJECTDIR}/_ext/69fa279c
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/home/martin/Projects/cpp/fltk-1.4.x.20191115 -I/home/martin/Projects/cpp/my -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/69fa279c/commandpipe.o /home/martin/Projects/cpp/SearchInFiles/commandpipe.cpp
 
 ${OBJECTDIR}/_ext/69fa279c/grep.o: /home/martin/Projects/cpp/SearchInFiles/grep.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/69fa279c

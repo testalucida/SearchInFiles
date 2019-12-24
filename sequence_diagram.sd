@@ -1,0 +1,22 @@
+m:MainWindow
+ctrl:SearchController
+/crit:SearchCriteria
+/grep:Grep [x]
+/pipe:CommandPipe [x]
+/result:GrepResult [x]
+
+m:done()=ctrl.ctrl.startSearch()
+
+*1 ctrl
+Create SearchCriteria from GUI values
+*1
+ctrl:crit.new(GUI values)
+
+ctrl:grep.new(crit)
+grep:done(command)=grep.createCommand()
+ctrl:grep.run()
+
+grep:pipe.new(command)
+pipe:fgets=pipe.popen()
+pipe:result.new()
+

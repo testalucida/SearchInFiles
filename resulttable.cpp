@@ -81,9 +81,9 @@ void ResultTable::event_callback2()
 //                  name, R, C, (int)context, (int)Fl::event(), (int)is_interactive_resize());
 }
 
-void ResultTable::setResult(const Result& result) { 
-    _pResult = &result; 
+void ResultTable::setResult(Result* pResult) { 
+    _pResult = pResult; 
     cols(1);
     col_width(0, 1000);
-    rows(result.getCount());
+    //rows(pResult->getCount());
 }

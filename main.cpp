@@ -9,19 +9,23 @@
 
 #include <iostream>
 #include <unistd.h>
-
+#include <signal.h>
 #include <pthread.h>
+#include <sys/wait.h>
 
 using namespace std;
 
+#define READ_END 0
+#define WRITE_END 1
 
-typedef pthread_t Fl_Thread;
-extern "C" {
-  typedef void *(Fl_Thread_Func)(void *);
-}
+pid_t cpid = -1;
+pthread_t workerthread;
+int pipefds[2];
 
-static int fl_create_thread(Fl_Thread& t, Fl_Thread_Func* f, void* p) {
-  return pthread_create((pthread_t*)&t, 0, f, p);
+void report_and_exit(const char* msg) { //report and exit
+    perror(msg);
+    exit(-1);
+    /** failure **/
 }
 
 void onOpenFileDialog(Fl_Widget*, void*) {
@@ -81,26 +85,120 @@ void onGrepFinished(ResultPtr pResult) {
     
 }
 
-Result g_result;
-
-extern "C" void* nextSearch(void*) {
-    //runs in worker threads
-    ISearchCriteria crit;
-    provideSearchCriteria(crit);
-    Grep grep(crit);
-    grep.registerCommandCreatedCallback(onCommandCreated);
-    grep.registerSearchFinishedCallback(onGrepFinished);
-    const Result& result = grep.search();
-    g_result = result;
-    Fl::lock();
-    _table->setResult(g_result);
-    Fl::unlock();
-    Fl::awake(awakeCallback, NULL);
-    return NULL;
+FILE* g_pPipe;
+void onPipeCreated(FILE* pPipe) {
+    cerr << "pipe created.\n";
+    g_pPipe = pPipe;
 }
 
-Fl_Thread next_thread;
+//****************  CHILD PROCESS  ***********************
+
+void die(int signum) {
+    printf("\tChild confirming received signal: %i\n", signum);
+    puts("\tChild about to terminate gracefully...");
+    sleep(1);
+    puts("\tChild terminating now...");
+    _exit(0); /* fast-track notification of parent */
+}
+
+void set_kill_handler() {
+    struct sigaction current;
+    sigemptyset(&current.sa_mask);
+    /* clear the signal set */
+    current.sa_flags = 0;
+    /* enables setting sa_handler, not sa_action */
+    current.sa_handler = die;
+    /* specify a handler */
+    sigaction(SIGTERM, &current, NULL);
+    /* register the handler */
+}
+
+//Grep* g_pGrep;
+Result g_result;
+void search(int pipefd) {
+    //child process running in workerthread
+    
+    set_kill_handler();
+    
+    ISearchCriteria crit;
+    provideSearchCriteria(crit);
+    Grep grep(crit, pipefd);
+  
+    grep.registerCommandCreatedCallback(onCommandCreated);
+    grep.search();
+    //grep.registerPipeCreatedCallback(onPipeCreated);
+    //grep.registerSearchFinishedCallback(onGrepFinished);
+//    const Result& result = grep.search();
+//    g_result = result;
+//    Fl::lock();
+//    _table->setResult(g_result);
+//    Fl::unlock();
+//    Fl::awake(awakeCallback, NULL);
+}
+//****************  END CHILD PROCESS  ***********************
+
+void* createPipeAndFork( void* ) {
+    //workerthread's start function: 
+    //establish communication pipe and create child process
+    //call code to be executed in child process (search(..))
+    
+    //create pipe:
+    if(pipe(pipefds) < 0) {
+        report_and_exit("pipe creation failed.");
+    }
+    //fork:
+    if( (cpid = fork()) < 0 ) {
+        report_and_exit("fork failed.");
+    }
+    
+    if(cpid == 0) {
+        //CHILD
+        //close pipe for reading, child is only writing
+        close(pipefds[READ_END]);
+        
+        //child process
+        //the search result is written into the pipe which is read by
+        //the main process.
+        search(pipefds[WRITE_END]);
+        cpid = -1;
+        fprintf(stderr, "search ended, leaving child process.\n");
+        _exit(0);
+    } else {
+        //PARENT
+        //close pipe for writing, parent is only reading
+        close(pipefds[WRITE_END]);
+        
+        //setting new group id - needed in case of process cancelling
+        setpgid(cpid, cpid);
+        
+        //we wait 'til child's termination...
+        wait(NULL);
+        cpid = -1; //child process doesn't exist any more
+        //...and then read search result from pipe:
+        char buf; // 1 byte read buffer
+        string resultstring;
+        while( read(pipefds[READ_END], &buf, 1) > 0 ) {
+            resultstring += buf;
+        }
+        
+        close(pipefds[READ_END]);
+        
+        //cancelWorkerThread();
+        fprintf(stderr, 
+                "Result from communication pipe read in main process:\n%s\n", 
+                resultstring.c_str());
+        Result* pResult = new Result(resultstring);
+        Fl::lock();
+        _table->setResult(pResult);
+        Fl::unlock();
+        Fl::awake(awakeCallback, NULL);
+        fprintf(stderr, "workerthread terminating.\n");
+    }
+}
+
 void onStartSuche(Fl_Widget*, void*) {
+    //validates input and 
+    //create new thread which in turn creates search process
     if(isEmpty(_txtSuchtext->value())) {
         fl_alert("Es ist kein zu suchender Text eingegeben.");
         return;
@@ -112,17 +210,38 @@ void onStartSuche(Fl_Widget*, void*) {
     
     _btnStart->deactivate();
     
-    fl_create_thread(next_thread, nextSearch, NULL);
+    void* p = NULL;
+    int rc = pthread_create(&workerthread, 0, createPipeAndFork, p);
+    if (rc != 0) {
+        fprintf(stderr, "Couldn't create thread." );
+    }
  
 }
 
-void onCancel(Fl_Widget*, void*) {
-    /* Cancel THREAD immediately or at the next possibility.  */
-    int rc =  pthread_cancel((pthread_t) next_thread);
+void cancelWorkerThread() {
+    int rc =  pthread_cancel(workerthread);
     string msg = (rc != 0) ? "Abbrechen der Suche nicht erfolgreich." :
-                             "Suche abgebrochen.";
+                                 "Suche abgebrochen.";
     _outStatus->value(msg.c_str());
     _btnStart->activate();
+    _btnCancel->activate();
+}
+
+void onCancel(Fl_Widget*, void*) {
+    if( cpid > 0 ) {
+        int rc;
+        _btnCancel->deactivate();
+        rc = killpg(cpid, SIGTERM);
+        if (-1 == rc) {
+            report_and_exit("kill failed");
+        }
+        wait(NULL); /** wait for child to terminate **/
+        puts("My child terminated, about to exit myself...");
+        cpid = -1;
+       
+        
+        cancelWorkerThread();
+    }
 }
 
 void testGrep() {
@@ -186,12 +305,12 @@ int main() {
     
     _cbRekursiv->value(1);
     
-    //_btnStart->callback(onStartSuche);
-    //_btnCancel->callback(onCancel);
+    _btnStart->callback(onStartSuche);
+    _btnCancel->callback(onCancel);
     
     _outStatus->value("Bereit.");
     
-    SearchController();
+    //SearchController();
     
     pWin->show();
     
