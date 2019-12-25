@@ -5,6 +5,7 @@
 #include <FL/Fl.H>
 #include "resulttable.h"
 #include <FL/Fl_Double_Window.H>
+extern Fl_Double_Window *main_win;
 #include <FL/Fl_Input.H>
 extern Fl_Input *_txtSuchtext;
 extern Fl_Input *_txtSuchVerzeichnis;

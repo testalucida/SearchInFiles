@@ -68,6 +68,7 @@ void ResultTable::draw_cell(TableContext context,
 void ResultTable::event_callback(Fl_Widget*, void *data)
 {
     ResultTable *o = (ResultTable*)data;
+    fprintf(stderr, "resulttable event_callback.\n");
     o->event_callback2();
 }
 
@@ -84,6 +85,7 @@ void ResultTable::event_callback2()
 void ResultTable::setResult(Result* pResult) { 
     _pResult = pResult; 
     cols(1);
+    rows(pResult->getCount());
     col_width(0, 1000);
     //rows(pResult->getCount());
 }

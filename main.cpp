@@ -3,9 +3,13 @@
 #include "result.h"
 #include "resulttable.h"
 #include "grep.h"
+#include "searchcontroller.h"
+
+#include "my/StringHelper.h"
 
 #include <FL/Fl_Native_File_Chooser.H>
-
+#include <FL/Fl_Table.H>
+#include <FL/Fl_Select_Browser.H>
 
 #include <iostream>
 #include <unistd.h>
@@ -183,10 +187,9 @@ void* createPipeAndFork( void* ) {
         
         close(pipefds[READ_END]);
         
-        //cancelWorkerThread();
-        fprintf(stderr, 
-                "Result from communication pipe read in main process:\n%s\n", 
-                resultstring.c_str());
+//        fprintf(stderr, 
+//                "Result from communication pipe read in main process:\n%s\n", 
+//                resultstring.c_str());
         Result* pResult = new Result(resultstring);
         Fl::lock();
         _table->setResult(pResult);
@@ -244,53 +247,43 @@ void onCancel(Fl_Widget*, void*) {
     }
 }
 
-void testGrep() {
-    /*
-     -i  ignore case
-     -c  print only a count of selected lines per FILE
-     -r  recursive
-     -e, --regexp=MUSTER       MUSTER als regulären Ausdruck verwenden
-     -w, --word-regexp         MUSTER passt nur auf ganze Wörter
-     -x, --line-regexp         MUSTER passt nur auf ganze Zeilen
+void showInBrowser(const char* pPathnfile, int line) {
+   Fl_Select_Browser* pBrowser = 
+           new Fl_Select_Browser(500, 150, 300, 350, pPathnfile);
+   pBrowser->type(FL_MULTI_BROWSER);
+   pBrowser->load(pPathnfile);
+   pBrowser->select(line);
+}
 
-     --include=DATEIMUSTER  durchsucht nur Dateien, die DATEIMUSTER entsprechen
-     --exclude=DATEIMUSTER  überspringt Dateien und Verzeichnisse, die 
-                              DATEIMUSTER entsprechen
-     --exclude-from=DATEI   überspringt Dateien, die einem Dateimuster
-                              in DATEI entsprechen.
-     --exclude-dir=MUSTER   Verzeichnisse, die MUSTER entsprechen, 
-                              werden übersprungen
-     -l                     print only names of FILEs with selected lines
-                              (not the matching file line)
+void onTableRowClick(Fl_Widget*, void* p) {
+    if(Fl::event_clicks()) { //double click
+        int evt = (int)Fl::event();
+        if(evt == 2) {
+            ResultTable* pTable = ((ResultTable*)p);
+            Fl_Table::TableContext context = pTable->callback_context();
+            if(context == Fl_Table::CONTEXT_CELL) {
+                int r = pTable->callback_row(),
+                    c = pTable->callback_col();
+                
+                const char* val = pTable->getResult()->get(r);
+                vector<string> parts;
+                my::StringHelper::instance().tokenize(val, ':', parts);
+                //fprintf(stderr, "onTableRowClick: r = %d, c = %d\n", r, c);
+                if(parts.size() != 3) {
+                    //fl_alert("onTableRowClick: tokenizing failed.\n");
+                    //return;
+                }
+                int line = atoi(parts[1].c_str());
+                fprintf(stderr, "line: %d\n", line);
+                fprintf(stderr, "path: %s\n", parts[0].c_str());
+                showInBrowser(parts[0].c_str(), line);
+            }
 
-     * 
-     * Beispiel:
-     * grep -r --include=*.{cpp,h} "onStartSuche"
-     *   => SearchInFiles/main.cpp:    _btnStart->callback(onStartSuche);
-     */
-    
-    const char* cmd = "grep -r --include=*.cpp --include=*.h 'onStartSuche' /home/martin/Projects/cpp/SearchInFiles";
-   
-    char buffer[128];
-    std::string result = "";
-    FILE* pipe = popen(cmd, "r");
-    if (!pipe) throw std::runtime_error("popen() failed!");
-    try {
-        while (fgets(buffer, sizeof buffer, pipe) != NULL) {
-            result += buffer;
         }
-    } catch (...) {
-        pclose(pipe);
-        throw;
     }
-    pclose(pipe);
-    
-    fprintf(stderr, "result: %s\n", result.c_str());
     
 }
 
-
-#include "searchcontroller.h"
 
 int main() {
     //Fl::scheme("gtk+");
@@ -307,6 +300,7 @@ int main() {
     
     _btnStart->callback(onStartSuche);
     _btnCancel->callback(onCancel);
+    _table->callback(onTableRowClick, _table);
     
     _outStatus->value("Bereit.");
     

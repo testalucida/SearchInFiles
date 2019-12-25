@@ -51,6 +51,7 @@ void Grep::prepareCommand() {
         /*
      -i  ignore case
      -c  print only a count of selected lines per FILE
+     -n  Zeilennummer ausgeben
      -r  recursive
      -e, --regexp=MUSTER       MUSTER als regulären Ausdruck verwenden
      -w, --word-regexp         MUSTER passt nur auf ganze Wörter
@@ -78,7 +79,7 @@ void Grep::prepareCommand() {
     
     //const char* cmd = "grep -r --include=*.cpp --include=*.h 'onStartSuche' /home/martin/Projects/cpp/SearchInFiles";
     
-    _command = "grep ";
+    _command = "grep -n ";
     if(_crit.isRegex) _command += "-e "; 
     if(_crit.matchWord) _command += "-w ";
     if(_crit.searchRecursive) _command += "-r ";

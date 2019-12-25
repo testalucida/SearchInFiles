@@ -2,6 +2,8 @@
 
 #include "main_window.h"
 
+Fl_Double_Window *main_win=(Fl_Double_Window *)0;
+
 Fl_Input *_txtSuchtext=(Fl_Input *)0;
 
 Fl_Input *_txtSuchVerzeichnis=(Fl_Input *)0;
@@ -33,11 +35,9 @@ Fl_Output *_outStatus=(Fl_Output *)0;
 Fl_Output *_outCommand=(Fl_Output *)0;
 
 Fl_Double_Window* make_window() {
-  Fl_Double_Window* w;
-  { Fl_Double_Window* o = new Fl_Double_Window(600, 600, "Textsuche in Dateien");
-    w = o; if (w) {/* empty */}
-    o->color((Fl_Color)38);
-    o->labelcolor((Fl_Color)46);
+  { main_win = new Fl_Double_Window(600, 600, "Textsuche in Dateien");
+    main_win->color((Fl_Color)38);
+    main_win->labelcolor((Fl_Color)46);
     { _txtSuchtext = new Fl_Input(139, 20, 366, 25, "Suche Text: ");
       _txtSuchtext->tooltip("Gib hier zu suchenden Text oder einen regul\303\244ren Ausdruck ein");
       _txtSuchtext->box(FL_FLAT_BOX);
@@ -150,13 +150,15 @@ nes anderen Wortes");
       _outCommand->color((Fl_Color)46);
       _outCommand->labeltype(FL_NO_LABEL);
       _outCommand->textsize(12);
+      _outCommand->hide();
     } // Fl_Output* _outCommand
     { Fl_Box* o = new Fl_Box(7, 303, 220, 25, "Erzeugtes grep Command");
       o->labelfont(1);
       o->labelcolor((Fl_Color)53);
+      o->hide();
     } // Fl_Box* o
-    o->end();
-    o->resizable(o);
-  } // Fl_Double_Window* o
-  return w;
+    main_win->end();
+    main_win->resizable(main_win);
+  } // Fl_Double_Window* main_win
+  return main_win;
 }

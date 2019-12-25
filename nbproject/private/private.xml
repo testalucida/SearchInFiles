@@ -7,9 +7,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/martin/Projects/cpp/SearchInFiles/resulttable.cpp</file>
+            <file>file:/home/martin/Projects/cpp/SearchInFiles/result.cpp</file>
             <file>file:/home/martin/Projects/cpp/SearchInFiles/main.cpp</file>
-            <file>file:/home/martin/Projects/cpp/SearchInFiles/grep.h</file>
-            <file>file:/home/martin/Projects/cpp/SearchInFiles/grep.cpp</file>
+            <file>file:/home/martin/Projects/cpp/SearchInFiles/result.h</file>
+            <file>file:/home/martin/Projects/cpp/SearchInFiles/resulttable.h</file>
         </group>
     </open-files>
 </project-private>

@@ -27,17 +27,18 @@ public:
     {
         rows(0);
         cols(1);
-        cell_bgcolor = FL_WHITE;
-        cell_fgcolor = FL_BLACK;
+        cell_bgcolor = FL_BLACK;
+        cell_fgcolor = FL_WHITE;
         callback(&event_callback, (void*)this);
 	end();
     }
-    ~ResultTable() {if(_pResult) delete _pResult; }
+    ~ResultTable() {if(_pResult) delete _pResult; _pResult = NULL; }
     Fl_Color GetCellFGColor() const { return(cell_fgcolor); }
     Fl_Color GetCellBGColor() const { return(cell_bgcolor); }
     void SetCellFGColor(Fl_Color val) { cell_fgcolor = val; }
     void SetCellBGColor(Fl_Color val) { cell_bgcolor = val; }
     void setResult(Result* pResult);
+    Result* getResult() const {return _pResult;}
 
 protected:
     void draw_cell(TableContext context,  		// table cell drawing
