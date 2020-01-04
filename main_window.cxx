@@ -150,12 +150,10 @@ nes anderen Wortes");
       _outCommand->color((Fl_Color)46);
       _outCommand->labeltype(FL_NO_LABEL);
       _outCommand->textsize(12);
-      _outCommand->hide();
     } // Fl_Output* _outCommand
     { Fl_Box* o = new Fl_Box(7, 303, 220, 25, "Erzeugtes grep Command");
       o->labelfont(1);
       o->labelcolor((Fl_Color)53);
-      o->hide();
     } // Fl_Box* o
     main_win->end();
     main_win->resizable(main_win);

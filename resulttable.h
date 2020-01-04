@@ -39,6 +39,7 @@ public:
     void SetCellBGColor(Fl_Color val) { cell_bgcolor = val; }
     void setResult(Result* pResult);
     Result* getResult() const {return _pResult;}
+    void clearResult();
 
 protected:
     void draw_cell(TableContext context,  		// table cell drawing

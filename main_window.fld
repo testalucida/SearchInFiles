@@ -8,7 +8,7 @@ decl {\#include "resulttable.h"} {public local
 Function {make_window()} {open
 } {
   Fl_Window main_win {
-    label {Textsuche in Dateien} open selected
+    label {Textsuche in Dateien} open
     xywh {318 57 600 600} type Double color 38 labelcolor 46 resizable visible
   } {
     Fl_Input _txtSuchtext {
@@ -70,12 +70,12 @@ Function {make_window()} {open
     Fl_Output _outStatus {
       xywh {0 575 600 25} box FLAT_BOX color 46 labeltype NO_LABEL textsize 12
     }
-    Fl_Output _outCommand {
-      xywh {10 327 580 25} box FLAT_BOX color 46 labeltype NO_LABEL textsize 12 hide
+    Fl_Output _outCommand {selected
+      xywh {10 327 580 25} box FLAT_BOX color 46 labeltype NO_LABEL textsize 12
     }
     Fl_Box {} {
       label {Erzeugtes grep Command}
-      xywh {7 303 220 25} labelfont 1 labelcolor 53 hide
+      xywh {7 303 220 25} labelfont 1 labelcolor 53
     }
   }
 }
