@@ -13,16 +13,18 @@ Grep::Grep(const ISearchCriteria& crit, int pipefd)
 {
 }
 
-const Result& Grep::search()
+void /*const Result&*/ Grep::search()
 {
-    prepareCommand( );
-    string command = ":::CMD:::";
-    command.append( _command.c_str( ) ).append( ":::CMD_END:::" );
-    write( _pipefd, command.c_str( ), command.length( ) );
+    if( _command.empty() ) {
+        _command = prepareCommand( _crit );
+        string command = ":::CMD:::";
+        command.append( _command.c_str( ) ).append( ":::CMD_END:::" );
+        write( _pipefd, command.c_str( ), command.length( ) );
+    }
 
     _pPipe = popen( _command.c_str( ), "r" );
     if (!_pPipe) throw std::runtime_error( "popen() failed!" );
-
+    
     char buffer[128];
     string grepresult = "";
     try {
@@ -40,10 +42,10 @@ const Result& Grep::search()
     string endmarker = ":::CONV_END:::";
     write( _pipefd, endmarker.c_str( ), endmarker.length( ) );
     
-    return _result;
+    //return _result;
 }
 
-void Grep::prepareCommand()
+string Grep::prepareCommand( const ISearchCriteria& crit )
 {
     /*
  -i  ignore case
@@ -76,61 +78,48 @@ void Grep::prepareCommand()
 
     //const char* cmd = "grep -r --include=*.cpp --include=*.h 'onStartSuche' /home/martin/Projects/cpp/SearchInFiles";
 
-    _command = "grep -n ";
-    if (_crit.isRegex) _command += "-e ";
-    if (_crit.matchWord) _command += "-w ";
-    if (_crit.searchRecursive) _command += "-r ";
-    if (_crit.ignoreCase) _command += "-i ";
-    if (_crit.searchInBinaries) {
-        _command += "--text ";
+    string command = "grep -n ";
+    if (crit.isRegex) command += "-e ";
+    if (crit.matchWord) command += "-w ";
+    if (crit.searchRecursive) command += "-r ";
+    if (crit.ignoreCase) command += "-i ";
+    if (crit.searchInBinaries) {
+        command += "--text ";
     } else {
-        _command += "--binary-files=without-match ";
+        command += "--binary-files=without-match ";
     }
-
-    provideFilePattern( );
     
-    if( _crit.excludeHiddenFolders ) {
-        _command += "--exclude-dir='.*' ";
+    //provide file pattern:
+    vector<string> patterns;
+    my::StringHelper::instance( ).
+            tokenize( crit.filepattern.c_str( ), ',', patterns );
+    for (auto& pattern : patterns) {
+        ltrim( pattern );
+        command += ("--include=\"" + pattern + "\" ");
+    }
+    
+    if( crit.excludeHiddenFolders ) {
+        command += "--exclude-dir='.*' ";
     } else {
         //exclude .git anyways
-        _command += "--exclude-dir='.git' ";
+        command += "--exclude-dir='.git' ";
     }
 
-    _command += ("\"" + _crit.searchText + "\" ");
-    _command += _crit.startDir;
+    command += ("\"" + crit.searchText + "\" ");
+    command += crit.startDir;
+    
+    return command;
 }
 
 // trim from start (in place)
-
-static inline void ltrim(std::string &s)
-{
+void Grep::ltrim( string &s ) {
     s.erase( s.begin( ), std::find_if( s.begin( ), s.end( ), [](int ch)
     {
         return !std::isspace( ch );
     } ) );
 }
 
-void Grep::provideFilePattern()
-{
-    vector<string> patterns;
-    my::StringHelper::instance( ).
-            tokenize( _crit.filepattern.c_str( ), ',', patterns );
-    for (auto& pattern : patterns) {
-        ltrim( pattern );
-        _command += ("--include=\"" + pattern + "\" ");
-    }
-}
-
-//void Grep::createResult(const std::string& grepresult) {
-//    vector<string> matches;
-//    my::StringHelper::instance().tokenize(grepresult.c_str(), '\n', matches);
-//    _result.set(matches);
-//    if(_result.getCount() == 0) _result.add("Kein Treffer.");
+//void Grep::provideFilePattern()
+//{
+//    
 //}
-
-void Grep::cancel()
-{
-    pclose( _pPipe );
-}
-
-

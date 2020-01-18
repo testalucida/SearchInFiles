@@ -26,6 +26,7 @@ using namespace std;
 
 Fl_Double_Window* pMainWin;
 pid_t cpid = -1;
+pthread_t grep_command_thread;
 pthread_t workerthread;
 pthread_t browserthread;
 int pipefds[2];
@@ -59,13 +60,6 @@ void onOpenFileDialog(Fl_Widget*, void*) {
     }
 }
 
-bool isEmpty(const char* pStr) {
-    for (const char* p = pStr; *p; p++) {
-        if (*p > ' ') return false;
-    }
-    return true;
-}
-
 ISearchCriteria& provideSearchCriteria(ISearchCriteria& crit) {
     crit.searchText = _txtSuchtext->value( );
     crit.isRegex = (_cbRegex->value( ) > 0);
@@ -77,6 +71,24 @@ ISearchCriteria& provideSearchCriteria(ISearchCriteria& crit) {
     crit.startDir = _txtSuchVerzeichnis->value( );
     crit.searchRecursive = (_cbRekursiv->value( ) > 0);
     return crit;
+}
+
+void* createGrepCommand( void* p ) {
+    //ISearchCriteria* pSearchCrit = (ISearchCriteria*) p;
+    ISearchCriteria sc;
+    provideSearchCriteria( sc );
+    string cmd = Grep::prepareCommand( sc );
+    Fl::lock( );
+    _outCommand->value( cmd.c_str( ) );
+    Fl::unlock( );
+    Fl::awake( (void*) NULL );
+}
+
+bool isEmpty(const char* pStr) {
+    for (const char* p = pStr; *p; p++) {
+        if (*p > ' ') return false;
+    }
+    return true;
 }
 
 //****************  CHILD PROCESS  ***********************
@@ -258,9 +270,14 @@ void onStartSuche(Fl_Widget*, void*) {
     pMainWin->cursor( Fl_Cursor::FL_CURSOR_WAIT );
     
     void* p = NULL;
-    int rc = pthread_create( &workerthread, 0, createPipeAndFork, p );
+    int rc = pthread_create( &grep_command_thread, 0, createGrepCommand, p );
     if (rc != 0) {
-        fprintf( stderr, "Couldn't create thread." );
+        fprintf( stderr, "Couldn't create grep command thread." );
+    }
+    
+    rc = pthread_create( &workerthread, 0, createPipeAndFork, p );
+    if (rc != 0) {
+        fprintf( stderr, "Couldn't create pipe and fork thread." );
     }
 
 }
@@ -318,7 +335,7 @@ void showInBrowser(const char* pPathnfile, int line) {
     MatchBrowserWindow* pWin = make_browser( );
     pWin->callback( browserCallback );
     pWin->position( pMainWin->x( ) + pMainWin->w( ), pMainWin->y( ) + 100 );
-    _pBtnClose->callback( closeButtonCallback );
+//    _pBtnClose->callback( closeButtonCallback );
     _pBrowser->type( FL_MULTI_BROWSER );
     _pBrowser->load( pPathnfile );
     _pBrowser->select( line );

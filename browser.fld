@@ -5,27 +5,31 @@ code_name {.cxx}
 decl {\#include "browse_match.hpp"} {public local
 }
 
+decl {void closeButtonCallback(Fl_Widget* pBtn, void*);} {selected public global
+}
+
 Function {make_browser()} {open
 } {
-  Fl_Window {} {open selected
-    xywh {269 224 475 425} type Double resizable
+  Fl_Window {} {open
+    private xywh {269 224 475 425} type Double resizable
     class MatchBrowserWindow visible
   } {
     Fl_Browser _pBrowser {
       xywh {8 5 460 375} resizable
       class MatchBrowser
     }
-    Fl_Button _pBtnPrev {
+    Fl_Button {} {
       label {<<}
-      xywh {10 395 70 20}
+      private xywh {10 395 70 20}
     }
-    Fl_Button _pBtnNext {
+    Fl_Button {} {
       label {>>}
-      xywh {85 395 70 20}
+      private xywh {85 395 70 20}
     }
-    Fl_Button _pBtnClose {
+    Fl_Button {} {
       label {Schließen}
-      xywh {385 395 81 20}
+      private xywh {385 395 81 20}
+      code0 {o->callback(closeButtonCallback);}
     }
   }
 }
