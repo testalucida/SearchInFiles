@@ -8,8 +8,8 @@ decl {\#include "resulttable.h"} {public local
 Function {make_window()} {open
 } {
   Fl_Window main_win {
-    label {Textsuche in Dateien} open
-    xywh {318 57 600 600} type Double color 38 labelcolor 46 resizable visible
+    label {Textsuche in Dateien} open selected
+    xywh {82 58 600 600} type Double color 38 labelcolor 46 resizable visible
   } {
     Fl_Input _txtSuchtext {
       label {Suche Text: }
@@ -37,7 +37,7 @@ Function {make_window()} {open
     }
     Fl_Check_Button _cbRekursiv {
       label { rekursiv suchen}
-      xywh {140 221 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
+      xywh {140 220 70 25} down_box DOWN_BOX color 52 labelfont 1 labelcolor 53
     }
     Fl_Input _txtFilePattern {
       label {File pattern: }
@@ -70,12 +70,16 @@ Function {make_window()} {open
     Fl_Output _outStatus {
       xywh {0 575 600 25} box FLAT_BOX color 46 labeltype NO_LABEL textsize 12
     }
-    Fl_Output _outCommand {selected
+    Fl_Output _outCommand {
       xywh {10 327 580 25} box FLAT_BOX color 46 labeltype NO_LABEL textsize 12
     }
     Fl_Box {} {
       label {Erzeugtes grep Command}
       xywh {7 303 220 25} labelfont 1 labelcolor 53
+    }
+    Fl_Check_Button _cbHiddenFolders {
+      label {in versteckten Ordnern suchen}
+      tooltip {ACHTUNG! Sehr lange Suchzeit wahrscheinlich!} xywh {315 220 70 25} down_box DOWN_BOX labelfont 1 labelcolor 52
     }
   }
 }

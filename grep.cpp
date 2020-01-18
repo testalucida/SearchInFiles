@@ -88,6 +88,13 @@ void Grep::prepareCommand()
     }
 
     provideFilePattern( );
+    
+    if( _crit.excludeHiddenFolders ) {
+        _command += "--exclude-dir='.*' ";
+    } else {
+        //exclude .git anyways
+        _command += "--exclude-dir='.git' ";
+    }
 
     _command += ("\"" + _crit.searchText + "\" ");
     _command += _crit.startDir;

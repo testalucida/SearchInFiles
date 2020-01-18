@@ -18,6 +18,7 @@ struct ISearchCriteria {
     bool ignoreCase = true;
     bool matchWord = false;
     std::string filepattern; // *.cpp, *.cc, *.h, ...
+    bool excludeHiddenFolders = true; //
     bool searchInBinaries = false;
     std::string startDir;
     bool searchRecursive = true;

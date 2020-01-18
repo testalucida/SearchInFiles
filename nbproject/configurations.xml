@@ -4,6 +4,8 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>/home/martin/Projects/cpp/SearchInFiles/browse_match.hpp</itemPath>
+      <itemPath>/home/martin/Projects/cpp/SearchInFiles/browser.h</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/commandpipe.h</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/grep.h</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/isearchcriteria.h</itemPath>
@@ -15,11 +17,13 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
+      <itemPath>/home/martin/Projects/cpp/SearchInFiles/browser.fld</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/main_window.fld</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>/home/martin/Projects/cpp/SearchInFiles/browser.cxx</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/commandpipe.cpp</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/grep.cpp</itemPath>
       <itemPath>/home/martin/Projects/cpp/SearchInFiles/main.cpp</itemPath>
@@ -63,6 +67,7 @@
           <linkerAddLib>
             <pElem>/home/martin/Projects/cpp/fltk-1.4.x.20191115/lib</pElem>
             <pElem>/home/martin/Projects/cpp/my/My/dist/Debug/GNU-Linux</pElem>
+            <pElem>/home/martin/Projects/cpp/lib</pElem>
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>fltk</linkerLibLibItem>
@@ -72,6 +77,26 @@
           <commandLine>-lXrender -lXcursor -lXfixes -lXext -lXft -lfontconfig -lXinerama -lpthread -ldl -lm -lX11</commandLine>
         </linkerTool>
       </compileType>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/browse_match.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/browser.cxx"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/browser.fld"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/browser.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="/home/martin/Projects/cpp/SearchInFiles/commandpipe.cpp"
             ex="false"
             tool="1"
@@ -176,6 +201,7 @@
           <linkerAddLib>
             <pElem>/home/martin/Projects/cpp/fltk-1.4.x.20191115/lib</pElem>
             <pElem>/home/martin/Projects/cpp/my/My/dist/Release/GNU-Linux</pElem>
+            <pElem>/home/martin/Projects/cpp/lib</pElem>
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>fltk</linkerLibLibItem>
@@ -185,6 +211,26 @@
           <commandLine>-lXrender -lXcursor -lXfixes -lXext -lXft -lfontconfig -lXinerama -lpthread -ldl -lm -lX11</commandLine>
         </linkerTool>
       </compileType>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/browse_match.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/browser.cxx"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/browser.fld"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/martin/Projects/cpp/SearchInFiles/browser.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="/home/martin/Projects/cpp/SearchInFiles/commandpipe.cpp"
             ex="false"
             tool="1"

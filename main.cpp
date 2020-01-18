@@ -1,4 +1,6 @@
 #include "main_window.h"
+#include "browser.h"
+#include "browse_match.hpp"
 #include "isearchcriteria.h"
 #include "result.h"
 #include "resulttable.h"
@@ -22,8 +24,10 @@ using namespace std;
 #define READ_END 0
 #define WRITE_END 1
 
+Fl_Double_Window* pMainWin;
 pid_t cpid = -1;
 pthread_t workerthread;
+pthread_t browserthread;
 int pipefds[2];
 
 void report_and_exit(const char* msg) { //report and exit
@@ -68,6 +72,7 @@ ISearchCriteria& provideSearchCriteria(ISearchCriteria& crit) {
     crit.ignoreCase = (_cbCaseSensitiv->value( ) < 1);
     crit.matchWord = (_cbMatchWord->value( ) > 0);
     crit.filepattern = _txtFilePattern->value( );
+    crit.excludeHiddenFolders = ( _cbHiddenFolders->value() < 1 );
     crit.searchInBinaries = (_cbIncludeBinaries->value( ) > 0);
     crit.startDir = _txtSuchVerzeichnis->value( );
     crit.searchRecursive = (_cbRekursiv->value( ) > 0);
@@ -218,10 +223,12 @@ void* createPipeAndFork(void*) {
         Fl::lock( );
         _table->setResult( pResult );
         _btnStart->activate( );
+        pMainWin->cursor( Fl_Cursor::FL_CURSOR_ARROW );
         Fl::unlock( );
         Fl::awake( (void*) NULL );
 
-        wait( NULL );
+        wait( NULL ); //wait for end of child process
+        cpid = -1;
         cerr << "PARENT: end of process" << endl;
     }
 }
@@ -232,6 +239,10 @@ void clearResult() {
 }
 
 void onStartSuche(Fl_Widget*, void*) {
+    _outStatus->value( "Bereit." );
+    _outCommand->value( "" );
+    cerr << "outCommand cleared? --> " << _outCommand->value() << endl; 
+    _table->clearResult( );
     //validates input and 
     //create new thread which in turn creates search process
     if (isEmpty( _txtSuchtext->value( ) )) {
@@ -244,7 +255,8 @@ void onStartSuche(Fl_Widget*, void*) {
     }
 
     _btnStart->deactivate( );
-
+    pMainWin->cursor( Fl_Cursor::FL_CURSOR_WAIT );
+    
     void* p = NULL;
     int rc = pthread_create( &workerthread, 0, createPipeAndFork, p );
     if (rc != 0) {
@@ -260,6 +272,7 @@ void cancelWorkerThread() {
     _outStatus->value( msg.c_str( ) );
     _btnStart->activate( );
     _btnCancel->activate( );
+    pMainWin->cursor( Fl_Cursor::FL_CURSOR_ARROW );
     clearResult( );
 }
 
@@ -277,15 +290,51 @@ void onCancel(Fl_Widget*, void*) {
 
         cancelWorkerThread( );
     }
+    
+    _outStatus->value( "Bereit." );
+    _outCommand->value( "" );
+    _table->clearResult();
+}
+
+void browserCallback(Fl_Widget* pWin, void*) {
+    MatchBrowserWindow* p = (MatchBrowserWindow*) pWin;
+    p->hide();
+    //delete p;
+    /*
+    Fl::lock();
+    p->hide( );
+    //Fl::delete_widget( p );
+    Fl::unlock();
+    Fl::awake((void*)NULL);
+    */
+}
+
+void closeButtonCallback(Fl_Widget* pBtn, void*) {
+    Fl_Button* p = (Fl_Button*) pBtn;
+    p->parent()->hide();
 }
 
 void showInBrowser(const char* pPathnfile, int line) {
-    Fl_Select_Browser* pBrowser =
-            new Fl_Select_Browser( 500, 150, 300, 350, pPathnfile );
-    pBrowser->type( FL_MULTI_BROWSER );
-    pBrowser->load( pPathnfile );
-    pBrowser->select( line );
+    MatchBrowserWindow* pWin = make_browser( );
+    pWin->callback( browserCallback );
+    pWin->position( pMainWin->x( ) + pMainWin->w( ), pMainWin->y( ) + 100 );
+    _pBtnClose->callback( closeButtonCallback );
+    _pBrowser->type( FL_MULTI_BROWSER );
+    _pBrowser->load( pPathnfile );
+    _pBrowser->select( line );
+    _pBrowser->topline( line );
+    pWin->show( );
+
 }
+
+/*
+void* startBrowserThread( void* args ) {
+    Fl::lock();
+    showInBrowser((const char*)args, 10);
+    Fl::unlock();
+    Fl::awake((void*)NULL);
+}
+*/
 
 void onTableRowClick(Fl_Widget*, void* p) {
     if (Fl::event_clicks( )) { //double click
@@ -308,6 +357,14 @@ void onTableRowClick(Fl_Widget*, void* p) {
                 int line = atoi( parts[1].c_str( ) );
                 fprintf( stderr, "line: %d\n", line );
                 fprintf( stderr, "path: %s\n", parts[0].c_str( ) );
+                /*
+                int rc = 
+                pthread_create( &browserthread, 0, startBrowserThread, 
+                        (void*)parts[0].c_str( ) );
+                if (rc != 0) {
+                    fprintf( stderr, "Couldn't create browser thread." );
+                }
+                */
                 showInBrowser( parts[0].c_str( ), line );
             }
 
@@ -322,7 +379,7 @@ void onTableRowClick(Fl_Widget*, void* p) {
  * "Kein Treffer" in der Result-Table löschen bei neuem Suchvorgang
  * Den Suchfortschritt im Status anzeigen - man erkennt sonst nicht,
  * ob eine Suche noch läuft oder eingefroren ist.
- * Fl_Browser aufmachen nach Doppelklick auf Result-Row
+ * Mauszeiger auf busy stellen, wenn Start gedrückt wurde
  */
 
 
@@ -330,7 +387,7 @@ int main() {
     //Fl::scheme("gtk+");
     Fl::scheme( "gleam" );
 
-    Fl_Double_Window* pWin = make_window( );
+    pMainWin = make_window( );
     _txtFilePattern->value( "*.cpp, *.cxx, *.cc, *.c, *.h, *.hpp, *.hxx" );
     char filename[FILENAME_MAX];
     char* resp = getcwd( filename, FILENAME_MAX );
@@ -347,7 +404,7 @@ int main() {
 
     //SearchController();
 
-    pWin->show( );
+    pMainWin->show( );
 
     Fl::lock( );
 

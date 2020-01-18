@@ -28,5 +28,6 @@ extern Fl_Check_Button *_cbIncludeBinaries;
 #include <FL/Fl_Output.H>
 extern Fl_Output *_outStatus;
 extern Fl_Output *_outCommand;
+extern Fl_Check_Button *_cbHiddenFolders;
 Fl_Double_Window* make_window();
 #endif

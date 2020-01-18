@@ -34,6 +34,8 @@ Fl_Output *_outStatus=(Fl_Output *)0;
 
 Fl_Output *_outCommand=(Fl_Output *)0;
 
+Fl_Check_Button *_cbHiddenFolders=(Fl_Check_Button *)0;
+
 Fl_Double_Window* make_window() {
   { main_win = new Fl_Double_Window(600, 600, "Textsuche in Dateien");
     main_win->color((Fl_Color)38);
@@ -83,7 +85,7 @@ Fl_Double_Window* make_window() {
       _btnOpenFileDialog->labelsize(12);
       _btnOpenFileDialog->labelcolor((Fl_Color)55);
     } // Fl_Button* _btnOpenFileDialog
-    { _cbRekursiv = new Fl_Check_Button(140, 221, 70, 25, " rekursiv suchen");
+    { _cbRekursiv = new Fl_Check_Button(140, 220, 70, 25, " rekursiv suchen");
       _cbRekursiv->down_box(FL_DOWN_BOX);
       _cbRekursiv->color(FL_LIGHT2);
       _cbRekursiv->labelfont(1);
@@ -155,6 +157,12 @@ nes anderen Wortes");
       o->labelfont(1);
       o->labelcolor((Fl_Color)53);
     } // Fl_Box* o
+    { _cbHiddenFolders = new Fl_Check_Button(315, 220, 70, 25, "in versteckten Ordnern suchen");
+      _cbHiddenFolders->tooltip("ACHTUNG! Sehr lange Suchzeit wahrscheinlich!");
+      _cbHiddenFolders->down_box(FL_DOWN_BOX);
+      _cbHiddenFolders->labelfont(1);
+      _cbHiddenFolders->labelcolor(FL_LIGHT2);
+    } // Fl_Check_Button* _cbHiddenFolders
     main_win->end();
     main_win->resizable(main_win);
   } // Fl_Double_Window* main_win

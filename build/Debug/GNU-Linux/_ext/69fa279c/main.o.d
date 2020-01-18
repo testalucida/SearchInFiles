@@ -35,6 +35,8 @@ build/Debug/GNU-Linux/_ext/69fa279c/main.o: \
  /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_Box.H \
  /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_Output.H \
  /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_Input.H \
+ /home/martin/Projects/cpp/SearchInFiles/browser.h \
+ /home/martin/Projects/cpp/SearchInFiles/browse_match.hpp \
  /home/martin/Projects/cpp/SearchInFiles/isearchcriteria.h \
  /home/martin/Projects/cpp/SearchInFiles/grep.h \
  /home/martin/Projects/cpp/SearchInFiles/searchcontroller.h \
@@ -49,7 +51,6 @@ build/Debug/GNU-Linux/_ext/69fa279c/main.o: \
  /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_Tile.H \
  /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_File_Browser.H \
  /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_Browser.H \
- /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_Browser_.H \
  /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_File_Icon.H \
  /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/filename.H \
  /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_File_Input.H \
@@ -126,6 +127,10 @@ build/Debug/GNU-Linux/_ext/69fa279c/main.o: \
 
 /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_Input.H:
 
+/home/martin/Projects/cpp/SearchInFiles/browser.h:
+
+/home/martin/Projects/cpp/SearchInFiles/browse_match.hpp:
+
 /home/martin/Projects/cpp/SearchInFiles/isearchcriteria.h:
 
 /home/martin/Projects/cpp/SearchInFiles/grep.h:
@@ -153,8 +158,6 @@ build/Debug/GNU-Linux/_ext/69fa279c/main.o: \
 /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_File_Browser.H:
 
 /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_Browser.H:
-
-/home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_Browser_.H:
 
 /home/martin/Projects/cpp/fltk-1.4.x.20191115/FL/Fl_File_Icon.H:
 

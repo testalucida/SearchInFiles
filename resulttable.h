@@ -32,7 +32,7 @@ public:
         callback(&event_callback, (void*)this);
 	end();
     }
-    ~ResultTable() {if(_pResult) delete _pResult; _pResult = NULL; }
+    ~ResultTable() { clearResult(); }
     Fl_Color GetCellFGColor() const { return(cell_fgcolor); }
     Fl_Color GetCellBGColor() const { return(cell_bgcolor); }
     void SetCellFGColor(Fl_Color val) { cell_fgcolor = val; }

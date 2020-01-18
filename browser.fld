@@ -1,0 +1,31 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1,0400
+header_name {.h}
+code_name {.cxx}
+decl {\#include "browse_match.hpp"} {public local
+}
+
+Function {make_browser()} {open
+} {
+  Fl_Window {} {open selected
+    xywh {269 224 475 425} type Double resizable
+    class MatchBrowserWindow visible
+  } {
+    Fl_Browser _pBrowser {
+      xywh {8 5 460 375} resizable
+      class MatchBrowser
+    }
+    Fl_Button _pBtnPrev {
+      label {<<}
+      xywh {10 395 70 20}
+    }
+    Fl_Button _pBtnNext {
+      label {>>}
+      xywh {85 395 70 20}
+    }
+    Fl_Button _pBtnClose {
+      label {Schließen}
+      xywh {385 395 81 20}
+    }
+  }
+}
